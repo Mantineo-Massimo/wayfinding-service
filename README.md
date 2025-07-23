@@ -4,7 +4,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
 ![Status](https://img.shields.io/badge/Status-Production-brightgreen)
 
-Un servizio di digital signage flessibile per mostrare indicazioni direzionali animate e informazioni sui piani, configurabile interamente tramite URL.
+Un microservizio per mostrare indicazioni direzionali animate e informazioni sui piani, configurabile interamente tramite URL.
 
 ![Showcase del Servizio Arrow](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-arrow-showcase.png?raw=true)
 ![Showcase del Servizio Elevator](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-elevator-showcase.png?raw=true)
