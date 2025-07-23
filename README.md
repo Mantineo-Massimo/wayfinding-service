@@ -6,8 +6,8 @@
 
 Un servizio di digital signage flessibile per mostrare indicazioni direzionali animate e informazioni sui piani, configurabile interamente tramite URL.
 
-![Showcase del Servizio Arrow](/docs/wayfinding-arrow-showcase.png)
-![Showcase del Servizio Elevator](/docs/wayfinding-elevator-showcase.png)
+![Showcase del Servizio Arrow](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-arrow-showcase.png?raw=true)
+![Showcase del Servizio Elevator](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-elevator-showcase.png?raw=true)
 
 ---
 
