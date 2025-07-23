@@ -1,0 +1,94 @@
+/* General body and background styling */
+body {
+  margin: 0;
+  padding: 0;
+  background: url('/assets/monitor_background.png') center/cover no-repeat fixed;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  overflow: hidden;
+  color: #333;
+}
+
+
+/* Nasconde la lingua non attiva */
+body.lang-en .lang-it { display: none; }
+body.lang-it .lang-en { display: none; }
+
+/* Contenitore principale per le frecce */
+.container {
+  display: flex;
+  /* MODIFICA CHIAVE: Allinea i blocchi dal basso per allineare le frecce */
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10vw;
+  width: 100%;
+}
+
+/* Singolo blocco freccia + etichetta */
+.arrow-container {
+  flex: 0 1 auto;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column; /* Etichetta SOPRA la freccia */
+  align-items: center;
+}
+
+/* Stile per le etichette */
+.label {
+  text-align: center;
+  margin-bottom: 40px;
+  white-space: nowrap;
+  color: #3c7cbb;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+.label-line1 {
+  font-size: 5vw;
+  font-weight: 500;
+  line-height: 1;
+}
+.label-line2 {
+  font-size: 7vw;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Placeholder per l'animazione della freccia */
+.arrow {
+  width: 20vw;
+  max-width: 280px;
+  height: auto;
+}
+
+/* Elementi overlay */
+.top-right, .bottom-left, .bottom-right {
+  position: absolute;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Orologio in alto a destra */
+.top-right {
+  top: 20px;
+  right: 30px;
+  font-size: 3em;
+}
+
+/* Data in basso a sinistra */
+.bottom-left {
+  bottom: 20px;
+  left: 30px;
+  font-size: 2em;
+}
+
+/* Etichetta edificio/piano in basso a destra */
+.bottom-right {
+  bottom: 20px;
+  right: 30px;
+  font-size: 2em;
+  text-align: right;
+}

@@ -1,0 +1,118 @@
+/* Impostazioni generali del corpo della pagina */
+body {
+  margin: 0;
+  padding: 0;
+  background: url('/assets/monitor_background.png') center/cover no-repeat fixed;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  overflow: hidden;
+  color: #333; /* Colore testo di default */
+}
+
+/* Nasconde la lingua non attiva */
+body.lang-en .lang-it { display: none; }
+body.lang-it .lang-en { display: none; }
+
+/* Contenitore principale per il contenuto dell'ascensore */
+.elevator-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 95%;
+  max-width: 1600px;
+}
+
+/* Header con numero e titolo del piano */
+.floor-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6vh;
+  width: 100%;
+}
+.floor-number {
+  flex-shrink: 0;
+  width: 8vw;
+  height: 8vw;
+  max-width: 90px;
+  max-height: 90px;
+  background-color: #3c7cbb; /* Colore blu allineato */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 4.5vw;
+  margin-right: 2.5vw;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.floor-title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 7vw;
+  color: #3c7cbb; /* Colore blu allineato */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Lista dei contenuti del piano */
+.content-list {
+  padding: 0 1em;
+  color: #3c7cbb; /* Colore blu allineato */
+}
+.content-list.multi-column {
+  width: 90vw;
+  max-width: 1500px;
+  column-count: 2;
+  column-gap: 5vw;
+}
+.content-item {
+  position: relative;
+  padding-left: 1.6em;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 2vh;
+  text-align: left;
+  font-size: 3.5vw;
+  break-inside: avoid-column;
+}
+.content-list.multi-column .content-item {
+  font-size: 3vw;
+}
+.content-item::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
+}
+
+/* Elementi overlay (identici a arrow_style.css) */
+.top-right, .bottom-left, .bottom-right {
+  position: absolute;
+  font-weight: bold;
+  color: #ffffff;
+}
+.top-right {
+  top: 20px;
+  right: 30px;
+  font-size: 3em;
+}
+.bottom-left {
+  bottom: 20px;
+  left: 30px;
+  font-size: 2em;
+}
+.bottom-right {
+  bottom: 20px;
+  right: 30px;
+  font-size: 2em;
+  text-align: right;
+  white-space: nowrap;
+}
