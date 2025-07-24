@@ -1,9 +1,11 @@
-/* Impostazioni generali del corpo della pagina */
+/* General body and background styling */
 body {
   margin: 0;
   padding: 0;
-  background: url('/assets/monitor_background.png') center/cover no-repeat fixed;
+  /* MODIFICA: Corretto il percorso relativo da ../ a ../../ */
+  background: url('../../assets/monitor_background.png') center/cover no-repeat fixed;
   font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: #ffffff;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -11,8 +13,8 @@ body {
   justify-content: center;
   font-size: 22px;
   overflow: hidden;
-  color: #333; /* Colore testo di default */
 }
+
 
 /* Nasconde la lingua non attiva */
 body.lang-en .lang-it { display: none; }

@@ -50,7 +50,7 @@ Questo servizio è parte della `DigitalSignageSuite` e viene avviato tramite il 
     ```bash
     docker compose up --build -d
     ```
-3.  Il servizio sarà accessibile sulla porta **8083**.
+3.  Il servizio è accessibile tramite il reverse proxy.
 
 ---
 
@@ -62,7 +62,7 @@ Per utilizzare il servizio, costruisci un URL specificando la vista e i parametr
 
 Mostra frecce con indicazioni per aule e uscita.
 
-* **URL:** `http://localhost:8083/arrow_view.html?left=Aule_1-10&leftDirection=left&center=Uscita&centerDirection=up&location=Blocco_A`
+* **URL:** `http://localhost/wayfinding/arrow_view.html?left=Aule_1-10&leftDirection=left&location=Blocco_A`
 
 * **Parametri Disponibili:**
 
@@ -76,7 +76,7 @@ Mostra frecce con indicazioni per aule e uscita.
 
 Mostra le informazioni per un piano specifico.
 
-* **URL:** `http://localhost:8083/elevator_view.html?floor=1_PRIMO_PIANO&content=AULE_1-5,STUDI_DOCENTI,SEGRETERIA&location=EDIFICIO_B`
+* **URL:** `http://localhost/wayfinding/elevator_view.html?floor=1_PRIMO_PIANO&content=AULE_1-5,SEGRETERIA`
 
 * **Parametri Disponibili:**
 

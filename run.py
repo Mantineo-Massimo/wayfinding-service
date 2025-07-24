@@ -1,27 +1,32 @@
-"""
-WSGI entrypoint for the Wayfinding Service.
+import os
+from flask import Flask, send_from_directory
 
-This is a simple Flask application that serves static HTML, CSS, and JS files
-for directional arrow and elevator displays. All logic is handled by the
-frontend, driven by URL parameters.
-"""
-from flask import Flask
+app = Flask(__name__, static_folder='ui')
 
-# Create a Flask app where the 'ui' directory is the root for all files.
-# static_url_path='' means that files can be accessed from the root URL.
-# e.g., http://localhost:8083/arrow_view.html
-app = Flask(__name__, static_folder='ui', static_url_path='')
+# --- Rotte per Servire i File dell'Interfaccia Utente ---
 
-@app.route('/')
-def index():
-    """Serves the default arrow view page as the homepage for demonstration."""
-    return app.send_static_file('arrow_view.html')
+@app.route('/arrow_view.html')
+def serve_arrow_view():
+    return send_from_directory(app.static_folder, 'arrow_view.html')
 
-@app.route('/<path:filename>')
-def serve_content(filename: str):
-    """Serves any requested file from the 'ui' directory."""
-    return app.send_static_file(filename)
+@app.route('/elevator_view.html')
+def serve_elevator_view():
+    return send_from_directory(app.static_folder, 'elevator_view.html')
+
+# --- Rotte Esplicite per Risorse Statiche ---
+
+@app.route('/static/<path:path>')
+def serve_static_files(path):
+    return send_from_directory(os.path.join(app.static_folder, 'static'), path)
+
+@app.route('/assets/<path:path>')
+def serve_assets(path):
+    return send_from_directory(os.path.join(app.static_folder, 'assets'), path)
+
+@app.route('/favicon.ico')
+def favicon():
+    # Assumendo che il favicon sia in ui/assets/
+    return send_from_directory(os.path.join(app.static_folder, 'assets'), 'favicon.ico')
 
 if __name__ == '__main__':
-    # This block is for local development only.
     app.run(host='0.0.0.0', port=8080, debug=True)

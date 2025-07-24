@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLabels();
     }
 
-    // --- Initialization ---
+// --- Initialization ---
     function init() {
         const params = getUrlParams();
         const sides = ['left', 'center', 'right'];
@@ -116,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,
-                path: '/assets/arrow.json'
+                // MODIFICA: Aggiunto /wayfinding/ al percorso del file JSON
+                path: '/wayfinding/assets/arrow.json'
             });
         });
 
