@@ -11,6 +11,18 @@ Un microservizio per mostrare indicazioni direzionali animate e informazioni sui
 
 ---
 
+## Indice
+
+1.  [Descrizione](#-descrizione)
+2.  [Funzionalità](#-funzionalità)
+3.  [Tecnologie Utilizzate](#-tecnologie-utilizzate)
+4.  [Avvio](#-avvio)
+5.  [Configurazione e URL di Esempio](#-configurazione-e-url-di-esempio)
+6.  [Tecnologie Utilizzate](#-tecnologie-utilizzate)
+7.  [Autori](#️-autori)
+
+---
+
 ## Descrizione
 
 Il **Wayfinding Service** è un microservizio leggero basato su Flask che fornisce due tipi di visualizzazioni per la guida all'interno di un edificio:
@@ -29,15 +41,6 @@ La caratteristica principale del servizio è la sua **configurabilità dinamica*
 * **Supporto Bilingue**: Alterna automaticamente tra Italiano e Inglese per tutte le etichette.
 * **Grafica Animata**: Utilizza la libreria Lottie per animazioni delle frecce fluide e leggere.
 * **Servizio Dockerizzato**: Funziona come un container indipendente, facile da gestire e distribuire con Docker Compose.
-
----
-
-## Tecnologie Utilizzate
-
-* **Backend**: Python, Flask, Gunicorn
-* **Frontend**: HTML5, CSS3, JavaScript
-* **Animazione**: Lottie
-* **Deployment**: Docker
 
 ---
 
@@ -85,3 +88,17 @@ Mostra le informazioni per un piano specifico.
 | `floor`    | Il numero e il nome del piano, separati da `_`.                           | `floor=1_PRIMO_PIANO`              |
 | `content`  | Elenco degli uffici/aule presenti sul piano, separati da virgola.          | `content=AULE_1-5,SEGRETERIA`      |
 | `location` | L'edificio o la posizione attuale, mostrata in basso a destra.            | `location=EDIFICIO_B`              |
+
+---
+
+## Tecnologie Utilizzate
+
+* **Backend**: Python, Flask, Gunicorn
+* **Frontend**: HTML5, CSS3, JavaScript
+* **Deployment**: Docker
+
+---
+
+## Autori
+
+Massimo Mantineo – Università degli Studi di Messina

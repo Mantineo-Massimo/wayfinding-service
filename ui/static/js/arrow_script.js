@@ -1,15 +1,26 @@
 /**
- * Script for the Directional Arrow Signage view.
- * - Parses URL parameters to determine which arrows and labels to display.
- * - Controls Lottie animations for arrows, including rotation.
- * - Manages bilingual text for labels and date overlays.
+ * Script for the Directional Arrow Signage view - Legacy Browser Compatible Version.
  */
-document.addEventListener('DOMContentLoaded', () => {
-    const getUrlParams = () => new URLSearchParams(window.location.search);
-    const padZero = (n) => String(n).padStart(2, '0');
-    let currentLanguage = 'en';
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Riferimenti al DOM ---
+    var dom = {
+        clock: document.getElementById('clock'),
+        date: document.getElementById('current-date'),
+        location: document.getElementById('location-label'),
+        container: document.querySelector('.container'),
+        body: document.body
+    };
 
-    const translations = {
+    // --- Stato e Configurazione ---
+    var state = {
+        currentLanguage: 'it'
+    };
+
+    var config = {
+        languageToggleInterval: 15 // in secondi
+    };
+
+    var translations = {
         it: {
             days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
             months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
@@ -25,98 +36,90 @@ document.addEventListener('DOMContentLoaded', () => {
             months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             words: {
                 "USCITA": "Exit",
-                "AULE": "Classrooms",
+                "AULE": "Rooms",
                 "BLOCCO": "Block",
                 "EDIFICIO": "Building"
             }
         }
     };
 
+    var padZero = function(n) { return String(n).padStart(2, '0'); };
+
     function translateText(text) {
         if (!text) return { line1: '', line2: '' };
-        const parts = text.split('_');
-        const langWords = translations[currentLanguage].words;
-        const line1 = langWords[parts[0].toUpperCase()] || parts[0];
-        const line2 = parts.slice(1).join(' ');
-        return { line1, line2 };
+        var parts = text.split('_');
+        var langWords = translations[state.currentLanguage].words;
+        var line1 = langWords[parts[0].toUpperCase()] || parts[0];
+        var line2 = parts.slice(1).join(' ');
+        return { line1: line1, line2: line2 };
     }
 
-    // --- DOM Elements ---
-    const dom = {
-        clock: document.getElementById('clock'),
-        date: document.getElementById('current-date'),
-        location: document.getElementById('location-label'),
-        container: document.querySelector('.container'),
-        body: document.body
-    };
-
-    // --- Core UI Functions ---
-    function updateClockAndDate() {
-        const now = new Date();
-        dom.clock.textContent = `${padZero(now.getHours())}:${padZero(now.getMinutes())}:${padZero(now.getSeconds())}`;
-        const lang = translations[currentLanguage];
-        const dayName = lang.days[now.getDay()];
-        const monthName = lang.months[now.getMonth()];
-        dom.date.textContent = `${dayName} ${now.getDate()} ${now.getFullYear()}`;
+    // --- Funzioni di Aggiornamento UI ---
+    function updateClock() {
+        var now = new Date();
+        dom.clock.textContent = padZero(now.getHours()) + ':' + padZero(now.getMinutes()) + ':' + padZero(now.getSeconds());
     }
 
-    function updateLabels() {
-        const params = getUrlParams();
-        // Update arrow labels
-        ['left', 'center', 'right'].forEach(side => {
-            const labelText = params.get(side);
-            const container = document.getElementById(`${side}-container`);
+    function updateStaticUI() {
+        var lang = translations[state.currentLanguage];
+        var now = new Date();
+        var dayName = lang.days[now.getDay()];
+        var monthName = lang.months[now.getMonth()];
+        dom.date.textContent = dayName + ' ' + now.getDate() + ' ' + now.getFullYear();
+
+        var params = new URLSearchParams(window.location.search);
+        // Aggiorna etichette frecce
+        ['left', 'center', 'right'].forEach(function(side) {
+            var labelText = params.get(side);
+            var container = document.getElementById(side + '-container');
             if (labelText && container) {
-                const { line1, line2 } = translateText(labelText);
-                container.querySelector('.label-line1').textContent = line1;
-                container.querySelector('.label-line2').textContent = line2;
+                var translated = translateText(labelText);
+                container.querySelector('.label-line1').textContent = translated.line1;
+                container.querySelector('.label-line2').textContent = translated.line2;
             }
         });
-        // Update location label
-        const locationText = params.get('location');
+        // Aggiorna etichetta location
+        var locationText = params.get('location');
         if (locationText) {
-            const { line1, line2 } = translateText(locationText);
-            dom.location.innerHTML = `${line1} ${line2}`.trim();
+            var translatedLocation = translateText(locationText);
+            dom.location.innerHTML = (translatedLocation.line1 + ' ' + translatedLocation.line2).trim();
         }
     }
 
     function toggleLanguage() {
-        currentLanguage = (currentLanguage === 'en') ? 'it' : 'en';
-        dom.body.classList.toggle('lang-en');
-        dom.body.classList.toggle('lang-it');
-        updateClockAndDate();
-        updateLabels();
+        state.currentLanguage = (state.currentLanguage === 'en') ? 'it' : 'en';
+        dom.body.className = 'lang-' + state.currentLanguage;
+        updateStaticUI();
     }
 
-// --- Initialization ---
+    // --- Inizializzazione ---
     function init() {
-        const params = getUrlParams();
-        const sides = ['left', 'center', 'right'];
-        const directions = {
+        var params = new URLSearchParams(window.location.search);
+        var sides = ['left', 'center', 'right'];
+        var directions = {
             'down': 0, 'down-left': 45, 'left': 90, 'up-left': 135,
             'up': 180, 'up-right': 225, 'right': 270, 'down-right': 315
         };
-        let visibleCount = 0;
+        var visibleCount = 0;
 
-        sides.forEach(side => {
-            const labelText = params.get(side);
+        sides.forEach(function(side) {
+            var labelText = params.get(side);
             if (!labelText) return;
 
             visibleCount++;
-            const container = document.getElementById(`${side}-container`);
+            var container = document.getElementById(side + '-container');
             container.style.display = 'flex';
             
-            const arrowEl = document.getElementById(`${side}-arrow`);
-            const direction = params.get(`${side}Direction`) || 'down';
-            const rotation = directions[direction] || 0;
-            arrowEl.style.transform = `rotate(${rotation}deg)`;
+            var arrowEl = document.getElementById(side + '-arrow');
+            var direction = params.get(side + 'Direction') || 'down';
+            var rotation = directions[direction] || 0;
+            arrowEl.style.transform = 'rotate(' + rotation + 'deg)';
 
             lottie.loadAnimation({
                 container: arrowEl,
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,
-                // MODIFICA: Aggiunto /wayfinding/ al percorso del file JSON
                 path: '/wayfinding/assets/arrow.json'
             });
         });
@@ -125,10 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.container.classList.add('two-items');
         }
 
-        updateClockAndDate();
-        updateLabels();
-        setInterval(updateClockAndDate, 1000);
-        setInterval(toggleLanguage, 15000);
+        dom.body.className = 'lang-' + state.currentLanguage;
+        updateStaticUI();
+
+        var secondsCounter = 0;
+        setInterval(function() {
+            secondsCounter++;
+            updateClock();
+
+            if (secondsCounter % config.languageToggleInterval === 0) {
+                toggleLanguage();
+            }
+        }, 1000);
     }
 
     init();

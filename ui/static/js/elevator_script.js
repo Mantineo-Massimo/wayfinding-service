@@ -1,14 +1,28 @@
 /**
- * Script for the Elevator Information Display.
- * - Parses URL parameters to dynamically display floor number, title, and a list of contents.
- * - Manages bilingual text for all displayed information.
- * - Adapts to a multi-column layout for longer content lists.
+ * Script for the Elevator Information Display - Legacy Browser Compatible Version.
  */
-document.addEventListener('DOMContentLoaded', () => {
-    const getUrlParams = () => new URLSearchParams(window.location.search);
-    const padZero = (n) => String(n).padStart(2, '0');
-    let currentLanguage = 'en';
-    const translations = {
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Riferimenti al DOM ---
+    var dom = {
+        clock: document.getElementById('clock'),
+        date: document.getElementById('current-date'),
+        location: document.getElementById('location-label'),
+        floorNumber: document.getElementById('floor-number-circle'),
+        floorTitle: document.getElementById('floor-title-text'),
+        contentList: document.getElementById('content-list'),
+        body: document.body
+    };
+
+    // --- Stato e Configurazione ---
+    var state = {
+        currentLanguage: 'it'
+    };
+
+    var config = {
+        languageToggleInterval: 15 // in secondi
+    };
+
+    var translations = {
         it: {
             days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
             months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
@@ -28,47 +42,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+
+    var padZero = function(n) { return String(n).padStart(2, '0'); };
+
     function translatePhrase(text) {
         if (!text) return '';
-        const formattedText = text.replace(/_/g, ' ');
-        const upperText = formattedText.toUpperCase();
-        return translations[currentLanguage].phrases[upperText] || formattedText;
+        var formattedText = text.replace(/_/g, ' ');
+        var upperText = formattedText.toUpperCase();
+        return translations[state.currentLanguage].phrases[upperText] || formattedText;
     }
 
-    // --- DOM Elements ---
-    const dom = {
-        clock: document.getElementById('clock'),
-        date: document.getElementById('current-date'),
-        location: document.getElementById('location-label'),
-        floorNumber: document.getElementById('floor-number-circle'),
-        floorTitle: document.getElementById('floor-title-text'),
-        contentList: document.getElementById('content-list'),
-        body: document.body
-    };
-
-    // --- Core UI Functions ---
-    function updateClockAndDate() {
-        const now = new Date();
-        dom.clock.textContent = `${padZero(now.getHours())}:${padZero(now.getMinutes())}:${padZero(now.getSeconds())}`;
-        const lang = translations[currentLanguage];
-        const dayName = lang.days[now.getDay()];
-        const monthName = lang.months[now.getMonth()];
-        dom.date.textContent = `${dayName} ${now.getDate()} ${monthName} ${now.getFullYear()}`;
+    // --- Funzioni di Aggiornamento UI ---
+    function updateClock() {
+        var now = new Date();
+        dom.clock.textContent = padZero(now.getHours()) + ':' + padZero(now.getMinutes()) + ':' + padZero(now.getSeconds());
     }
 
-    function updateDisplayContent() {
-        const params = getUrlParams();
+    function updateStaticUI() {
+        var lang = translations[state.currentLanguage];
+        var now = new Date();
+        var dayName = lang.days[now.getDay()];
+        var monthName = lang.months[now.getMonth()];
+        dom.date.textContent = dayName + ' ' + now.getDate() + ' ' + now.getFullYear();
+
+        var params = new URLSearchParams(window.location.search);
         
-        // Update Floor Header
-        const floorParam = params.get('floor') || '0_PIANO_TERRA';
-        const floorParts = floorParam.split('_');
+        // Aggiorna Header Piano
+        var floorParam = params.get('floor') || '0_PIANO_TERRA';
+        var floorParts = floorParam.split('_');
         dom.floorNumber.textContent = floorParts[0];
         dom.floorTitle.textContent = translatePhrase(floorParts.slice(1).join('_'));
 
-        // Update Content List
+        // Aggiorna Lista Contenuti
         dom.contentList.innerHTML = '';
-        const contentParam = params.get('content') || 'N/A';
-        const items = contentParam.split(',');
+        var contentParam = params.get('content') || 'N/A';
+        var items = contentParam.split(',');
         
         if (items.length > 4) {
             dom.contentList.classList.add('multi-column');
@@ -76,34 +84,42 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.contentList.classList.remove('multi-column');
         }
         
-        items.forEach(item => {
-            const div = document.createElement('div');
+        var fragment = document.createDocumentFragment();
+        items.forEach(function(item) {
+            var div = document.createElement('div');
             div.className = 'content-item';
             div.textContent = translatePhrase(item);
-            dom.contentList.appendChild(div);
+            fragment.appendChild(div);
         });
+        dom.contentList.appendChild(fragment);
 
-        // Update Location Label
-        const locationText = params.get('location');
+        // Aggiorna Etichetta Location
+        var locationText = params.get('location');
         if (locationText) {
            dom.location.textContent = translatePhrase(locationText);
         }
     }
     
     function toggleLanguage() {
-        currentLanguage = (currentLanguage === 'en') ? 'it' : 'en';
-        dom.body.classList.toggle('lang-en');
-        dom.body.classList.toggle('lang-it');
-        updateClockAndDate();
-        updateDisplayContent();
+        state.currentLanguage = (state.currentLanguage === 'en') ? 'it' : 'en';
+        dom.body.className = 'lang-' + state.currentLanguage;
+        updateStaticUI();
     }
 
-    // --- Initialization ---
+    // --- Inizializzazione ---
     function init() {
-        updateClockAndDate();
-        updateDisplayContent();
-        setInterval(updateClockAndDate, 1000);
-        setInterval(toggleLanguage, 15000);
+        dom.body.className = 'lang-' + state.currentLanguage;
+        updateStaticUI();
+
+        var secondsCounter = 0;
+        setInterval(function() {
+            secondsCounter++;
+            updateClock();
+
+            if (secondsCounter % config.languageToggleInterval === 0) {
+                toggleLanguage();
+            }
+        }, 1000);
     }
 
     init();
