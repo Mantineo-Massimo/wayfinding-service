@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             words: {
                 "USCITA": "Exit",
-                "AULE": "Rooms",
+                "AULE": "Classrooms",
                 "BLOCCO": "Block",
                 "EDIFICIO": "Building"
             }
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var now = new Date();
         var dayName = lang.days[now.getDay()];
         var monthName = lang.months[now.getMonth()];
-        dom.date.textContent = dayName + ' ' + now.getDate() + ' ' + now.getFullYear();
+        dom.date.textContent = dayName + ' ' + now.getDate() + ' ' + monthName + ' ' + now.getFullYear();
 
         var params = new URLSearchParams(window.location.search);
         // Aggiorna etichette frecce
