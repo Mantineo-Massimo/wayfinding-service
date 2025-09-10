@@ -2,32 +2,28 @@
 body {
   margin: 0;
   padding: 0;
-  /* MODIFICA: Corretto il percorso relativo da ../ a ../../ */
   background: url('../../assets/monitor_background.png') center/cover no-repeat fixed;
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Calibri','Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff;
   height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
   overflow: hidden;
 }
-
 
 /* Nasconde la lingua non attiva */
 body.lang-en .lang-it { display: none; }
 body.lang-it .lang-en { display: none; }
 
-/* Contenitore principale per il contenuto dell'ascensore */
+/* Contenitore principale */
 .elevator-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 95%;
-  max-width: 1600px;
+  width: 1420px;
+  height: 780px;
+  box-sizing: border-box;
+  padding: 40px 60px;
 }
 
 /* Header con numero e titolo del piano */
@@ -35,58 +31,62 @@ body.lang-it .lang-en { display: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 6vh;
   width: 100%;
+  flex-shrink: 0; 
+  margin-bottom: 30px;
 }
+
 .floor-number {
   flex-shrink: 0;
-  width: 8vw;
-  height: 8vw;
-  max-width: 90px;
-  max-height: 90px;
-  background-color: #3c7cbb; /* Colore blu allineato */
+  width: 95px;
+  height: 95px;
+  background-color: #3c7cbb;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   color: #ffffff;
-  font-size: 4.5vw;
-  margin-right: 2.5vw;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  font-size: 80px;
+  margin-right: 35px;
 }
+
 .floor-title {
   margin: 0;
   font-weight: 800;
-  font-size: 7vw;
-  color: #3c7cbb; /* Colore blu allineato */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 150px;
+  color: #3c7cbb;
+  line-height: 1;
 }
 
 /* Lista dei contenuti del piano */
 .content-list {
-  padding: 0 1em;
-  color: #3c7cbb; /* Colore blu allineato */
+  color: #3c7cbb;
+  width: 100%;
+  flex-grow: 1;
+  min-height: 0;
+  overflow: hidden;
+  line-height: 1.4;
 }
+
 .content-list.multi-column {
-  width: 90vw;
-  max-width: 1500px;
   column-count: 2;
-  column-gap: 5vw;
+  column-gap: 60px;
 }
+
 .content-item {
   position: relative;
-  padding-left: 1.6em;
+  padding-left: 1.5em;
   font-weight: 500;
-  line-height: 1.5;
-  margin-bottom: 2vh;
-  text-align: left;
-  font-size: 3.5vw;
   break-inside: avoid-column;
+  padding-bottom: 0.5em;
+  font-size: 57px; 
 }
+
 .content-list.multi-column .content-item {
-  font-size: 3vw;
+  font-size: 38px;
 }
+
 .content-item::before {
   content: '–';
   position: absolute;
@@ -95,26 +95,66 @@ body.lang-it .lang-en { display: none; }
   font-weight: 600;
 }
 
-/* Elementi overlay (identici a arrow_style.css) */
+/* Elementi overlay (orologio, data, ecc.) */
 .top-right, .bottom-left, .bottom-right {
   position: absolute;
   font-weight: bold;
   color: #ffffff;
 }
-.top-right {
-  top: 20px;
-  right: 30px;
-  font-size: 3em;
+.top-right { top: 20px; right: 30px; font-size: 6em; }
+.bottom-left { bottom: 40px; left: 30px; font-size: 4em; }
+.bottom-right { bottom: 40px; right: 30px; font-size: 4em; text-align: right; }
+
+
+/* ======================================== */
+/* NUOVO: Stili per la Schermata di Caricamento */
+/* ======================================== */
+
+#loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #0a2b5e; /* Colore blu scuro standard */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease, visibility 1s ease;
 }
-.bottom-left {
-  bottom: 20px;
-  left: 30px;
-  font-size: 2em;
+
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
-.bottom-right {
-  bottom: 20px;
-  right: 30px;
-  font-size: 2em;
-  text-align: right;
-  white-space: nowrap;
+
+.spinner-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 12px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #FFFFFF; /* Colore bianco */
+    border-radius: 50%;
+    animation: spin 1s infinite ease-in-out;
+}
+
+.spinner-logo {
+    width: 250px;
+    height: auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

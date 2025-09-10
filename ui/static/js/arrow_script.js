@@ -1,5 +1,5 @@
 /**
- * Script for the Directional Arrow Signage view - Legacy Browser Compatible Version.
+ * Script for the Directional Arrow Signage view - Robust & Legacy Browser Compatible Version.
  */
 document.addEventListener('DOMContentLoaded', function() {
     // --- Riferimenti al DOM ---
@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    var padZero = function(n) { return String(n).padStart(2, '0'); };
+    // Correzione per compatibilità
+    var padZero = function(n) { return n < 10 ? '0' + n : String(n); };
 
     function translateText(text) {
         if (!text) return { line1: '', line2: '' };
@@ -54,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return { line1: line1, line2: line2 };
     }
 
-    // --- Funzioni di Aggiornamento UI ---
     function updateClock() {
         var now = new Date();
         dom.clock.textContent = padZero(now.getHours()) + ':' + padZero(now.getMinutes()) + ':' + padZero(now.getSeconds());
@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dom.date.textContent = dayName + ' ' + now.getDate() + ' ' + monthName + ' ' + now.getFullYear();
 
         var params = new URLSearchParams(window.location.search);
-        // Aggiorna etichette frecce
         ['left', 'center', 'right'].forEach(function(side) {
             var labelText = params.get(side);
             var container = document.getElementById(side + '-container');
@@ -78,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.querySelector('.label-line2').textContent = translated.line2;
             }
         });
-        // Aggiorna etichetta location
         var locationText = params.get('location');
         if (locationText) {
             var translatedLocation = translateText(locationText);
@@ -92,7 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStaticUI();
     }
 
-    // --- Inizializzazione ---
+    // --- Logica per la Schermata di Caricamento ---
+    // Aspetta che l'intera pagina (immagini, stili, etc.) sia completamente caricata
+    window.onload = function() {
+        var loader = document.getElementById('loader');
+        if (loader) {
+            // Aggiunge la classe 'hidden' per far scomparire il loader con una transizione
+            loader.classList.add('hidden');
+        }
+    };
+
     function init() {
         var params = new URLSearchParams(window.location.search);
         var sides = ['left', 'center', 'right'];
@@ -115,13 +122,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var rotation = directions[direction] || 0;
             arrowEl.style.transform = 'rotate(' + rotation + 'deg)';
 
-            lottie.loadAnimation({
-                container: arrowEl,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: '/wayfinding/assets/arrow.json'
-            });
+            try {
+                if (lottie) {
+                    lottie.loadAnimation({
+                        container: arrowEl,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: '/wayfinding/assets/arrow.json'
+                    });
+                }
+            } catch (e) {
+                console.error("Lottie animation failed to load:", e);
+            }
         });
 
         if (visibleCount === 2) {
@@ -132,14 +145,24 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStaticUI();
 
         var secondsCounter = 0;
+        // Aggiunto try...catch per robustezza
         setInterval(function() {
-            secondsCounter++;
-            updateClock();
+            try {
+                secondsCounter++;
+                updateClock();
 
-            if (secondsCounter % config.languageToggleInterval === 0) {
-                toggleLanguage();
+                if (secondsCounter % config.languageToggleInterval === 0) {
+                    toggleLanguage();
+                }
+            } catch (e) {
+                console.error("Errore nell'intervallo principale:", e);
             }
         }, 1000);
+
+        // Aggiunto ricaricamento pagina per stabilità
+        setTimeout(function() { 
+            window.location.reload(true); 
+        }, 4 * 60 * 60 * 1000);
     }
 
     init();

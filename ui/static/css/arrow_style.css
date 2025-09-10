@@ -2,19 +2,17 @@
 body {
   margin: 0;
   padding: 0;
-  /* MODIFICA: Corretto il percorso relativo da ../ a ../../ */
   background: url('../../assets/monitor_background.png') center/cover no-repeat fixed;
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Calibri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff;
-  height: 100vh;
+  height: 1080px; /* Altezza fissa */
+  width: 1920px;  /* Larghezza fissa */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
   overflow: hidden;
 }
-
 
 /* Nasconde la lingua non attiva */
 body.lang-en .lang-it { display: none; }
@@ -23,73 +21,112 @@ body.lang-it .lang-en { display: none; }
 /* Contenitore principale per le frecce */
 .container {
   display: flex;
-  /* MODIFICA CHIAVE: Allinea i blocchi dal basso per allineare le frecce */
   align-items: flex-end;
   justify-content: center;
-  gap: 10vw;
+  /* MODIFICA: Spaziatura fissa in pixel per un controllo preciso */
+  gap: 450px;
   width: 100%;
 }
 
 /* Singolo blocco freccia + etichetta */
 .arrow-container {
   flex: 0 1 auto;
-  max-width: 450px;
+  max-width: 550px;
   display: flex;
-  flex-direction: column; /* Etichetta SOPRA la freccia */
+  flex-direction: column;
   align-items: center;
 }
 
 /* Stile per le etichette */
 .label {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   white-space: nowrap;
   color: #3c7cbb;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
 }
 .label-line1 {
-  font-size: 5vw;
+  /* MODIFICA: Dimensione del font fissa in pixel */
+  font-size: 115px;
   font-weight: 500;
   line-height: 1;
 }
 .label-line2 {
-  font-size: 7vw;
+  /* MODIFICA: Dimensione del font fissa in pixel */
+  font-size: 150px;
   font-weight: 700;
   line-height: 1.1;
 }
 
-/* Placeholder per l'animazione della freccia */
+/* Animazione della freccia */
 .arrow {
-  width: 20vw;
-  max-width: 280px;
+  /* MODIFICA: Dimensione fissa in pixel */
+  width: 480px;
+  max-width: 480px;
   height: auto;
 }
 
-/* Elementi overlay */
+/* Elementi overlay (orologio, data, ecc.) */
 .top-right, .bottom-left, .bottom-right {
   position: absolute;
   font-weight: bold;
   color: #ffffff;
 }
+/* MODIFICA: Dimensioni e posizioni in pixel per overlay */
+.top-right { top: 20px; right: 30px; font-size: 96px; } /* ~6em */
+.bottom-left { bottom: 40px; left: 30px; font-size: 64px; } /* ~4em */
+.bottom-right { bottom: 40px; right: 30px; font-size: 64px; text-align: right; } /* ~4em */
 
-/* Orologio in alto a destra */
-.top-right {
-  top: 20px;
-  right: 30px;
-  font-size: 3em;
+
+/* ======================================== */
+/* Stili per la Schermata di Caricamento    */
+/* ======================================== */
+
+#loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #0a2b5e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease, visibility 1s ease;
 }
 
-/* Data in basso a sinistra */
-.bottom-left {
-  bottom: 20px;
-  left: 30px;
-  font-size: 2em;
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
-/* Etichetta edificio/piano in basso a destra */
-.bottom-right {
-  bottom: 20px;
-  right: 30px;
-  font-size: 2em;
-  text-align: right;
+.spinner-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 12px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: spin 1s infinite ease-in-out;
+}
+
+.spinner-logo {
+    width: 250px;
+    height: auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
