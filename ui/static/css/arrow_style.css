@@ -21,13 +21,11 @@ body.lang-it .lang-en { display: none; }
 /* Contenitore principale per le frecce */
 .container {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  /* MODIFICA: Spaziatura fissa in pixel per un controllo preciso */
-  gap: 450px;
-  width: 100%;
+  align-items: center; /* <-- Allinea verticalmente al centro */
+  justify-content: space-around; /* <-- Distribuisce lo spazio orizzontalmente */
+  width: 90%; /* Aumenta leggermente lo spazio laterale */
+  height: 90%; /* Occupa tutta l'altezza per un centraggio migliore */
 }
-
 /* Singolo blocco freccia + etichetta */
 .arrow-container {
   flex: 0 1 auto;
@@ -40,7 +38,6 @@ body.lang-it .lang-en { display: none; }
 /* Stile per le etichette */
 .label {
   text-align: center;
-  margin-bottom: 50px;
   white-space: nowrap;
   color: #3c7cbb;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
@@ -61,8 +58,8 @@ body.lang-it .lang-en { display: none; }
 /* Animazione della freccia */
 .arrow {
   /* MODIFICA: Dimensione fissa in pixel */
-  width: 480px;
-  max-width: 480px;
+  width: 400px;
+  max-width: 400px;
   height: auto;
 }
 
