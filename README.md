@@ -1,104 +1,188 @@
-# Wayfinding Service
+# Wayfinding Service (Servizio di Indicazioni)
 
-![Python](https://img.shields.io/badge/Python-3.11-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
-![Status](https://img.shields.io/badge/Status-Production-brightgreen)
+[![Stato del Servizio](https://img.shields.io/badge/status-stabile-green.svg)](https://shields.io/)
+[![Linguaggio](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/Flask-2.3-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![Licenza](https://img.shields.io/badge/licenza-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Un microservizio per mostrare indicazioni direzionali animate e informazioni sui piani, configurabile interamente tramite URL.
+Un microservizio visuale per mostrare indicazioni direzionali (frecce) e informazioni sui piani (ascensore), configurabile interamente tramite parametri URL.
 
-![Showcase del Servizio Arrow](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-arrow-showcase.png?raw=true)
-![Showcase del Servizio Elevator](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-elevator-showcase.png?raw=true)
+![Showcase del Servizio Wayfinding](https://github.com/Mantineo-Massimo/DigitalSignageSuite/blob/master/docs/wayfinding-arrow-showcase.png?raw=true)
 
 ---
 
 ## Indice
 
-1.  [Descrizione](#-descrizione)
-2.  [Funzionalità](#-funzionalità)
-3.  [Tecnologie Utilizzate](#-tecnologie-utilizzate)
-4.  [Avvio](#-avvio)
-5.  [Configurazione e URL di Esempio](#-configurazione-e-url-di-esempio)
-6.  [Tecnologie Utilizzate](#-tecnologie-utilizzate)
-7.  [Autori](#️-autori)
+- [Panoramica del Progetto](#panoramica-del-progetto)
+- [Diagramma dell'Architettura](#diagramma-dellarchitettura)
+- [Caratteristiche Principali](#caratteristiche-principali)
+- [Tecnologie Utilizzate](#tecnologie-utilizzate)
+- [Struttura della Directory](#struttura-della-directory)
+- [Prerequisiti](#prerequisiti)
+- [Guida all'Installazione](#guida-allinstallazione)
+- [Utilizzo e Parametri URL](#utilizzo-e-parametri-url)
+- [Esecuzione dei Test](#esecuzione-dei-test)
+- [Come Contribuire](#come-contribuire)
+- [Licenza](#licenza)
 
 ---
 
-## Descrizione
+## Panoramica del Progetto
 
-Il **Wayfinding Service** è un microservizio leggero basato su Flask che fornisce due tipi di visualizzazioni per la guida all'interno di un edificio:
+Il `wayfinding-service` è un componente essenziale della Digital Signage Suite per l'orientamento all'interno degli edifici. Fornisce due tipi di visualizzazioni statiche ma altamente configurabili:
+1.  **`arrow_view.html`**: Mostra fino a tre frecce direzionali animate, ognuna con una propria etichetta e orientamento.
+2.  **`elevator_view.html`**: Mostra una lista di uffici, aule o dipartimenti presenti a un determinato piano.
 
-1.  **Vista Frecce (`arrow_view.html`)**: Mostra fino a tre frecce animate con etichette personalizzabili per guidare gli utenti.
-2.  **Vista Ascensore (`elevator_view.html`)**: Mostra le informazioni relative a un piano specifico, come uffici, aule o dipartimenti.
-
-La caratteristica principale del servizio è la sua **configurabilità dinamica**. Tutto il contenuto, incluse le etichette, le direzioni e le informazioni sui piani, viene passato direttamente tramite i parametri dell'URL, rendendolo estremamente versatile e facile da integrare.
-
----
-
-## Funzionalità
-
-* **Due Modalità di Visualizzazione**: Segnaletica direzionale (frecce) e informativa (ascensore).
-* **Contenuto 100% Dinamico**: Tutto è configurato al volo tramite l'URL, senza dati salvati nel codice.
-* **Supporto Bilingue**: Alterna automaticamente tra Italiano e Inglese per tutte le etichette.
-* **Grafica Animata**: Utilizza la libreria Lottie per animazioni delle frecce fluide e leggere.
-* **Servizio Dockerizzato**: Funziona come un container indipendente, facile da gestire e distribuire con Docker Compose.
+Il contenuto di ogni display è controllato dinamicamente passando dei parametri nella query string dell'URL.
 
 ---
 
-## Avvio
+## Diagramma dell'Architettura
 
-Questo servizio è parte della `DigitalSignageSuite` e viene avviato tramite il file `docker-compose.yml` nella directory principale del progetto.
+Questo servizio è principalmente un server di file statici intelligente, che si appoggia al `time-service` per sincronizzare gli orologi.
 
-1.  Assicurati di essere nella cartella `DigitalSignageSuite`.
-2.  Esegui il comando:
-    ```bash
-    docker compose up --build -d
-    ```
-3.  Il servizio è accessibile tramite il reverse proxy.
+```mermaid
+graph TD
+    subgraph "Client (Browser del Display)"
+        A[Richiesta HTTP con parametri URL]
+    end
+
+    subgraph "Digital Signage Suite (Rete Docker)"
+        B{Proxy Nginx}
+        C[Container wayfinding-service]
+        TS[Container time-service]
+    end
+
+    A -- 1. /wayfinding/arrow_view.html?... --> B;
+    B -- 2. Inoltra la richiesta a --> C;
+    C -- 3. Serve la pagina HTML --> B;
+    B -- 4. Invia la pagina al client --> A;
+    A -- 5. Lo script JS della pagina chiede l'ora a --> B;
+    B -- 6. Inoltra la richiesta /api/time/ a --> TS;
+```
 
 ---
 
-## Configurazione e URL di Esempio
+## Caratteristiche Principali
 
-Per utilizzare il servizio, costruisci un URL specificando la vista e i parametri desiderati.
-
-### Vista Frecce Direzionali (`arrow_view.html`)
-
-Mostra frecce con indicazioni per aule e uscita.
-
-* **URL:** `http://localhost/wayfinding/arrow_view.html?left=Aule_1-10&leftDirection=left&location=Blocco_A`
-
-* **Parametri Disponibili:**
-
-| Parametro       | Descrizione                                                                                           | Esempio                |
-| :-------------- | :---------------------------------------------------------------------------------------------------- | :--------------------- |
-| `left`, `center`, `right` | Il testo da mostrare per ogni freccia. Usa `_` per andare a capo.                                  | `Aule_1-10`            |
-| `...Direction`  | L'orientamento della freccia. Valori: `up`, `down`, `left`, `right`, `up-left`, `up-right`, `down-left`, `down-right`. | `leftDirection=left`   |
-| `location`      | Il testo da mostrare in basso a destra (es. la posizione attuale).                                    | `location=Blocco_A`    |
-
-### Vista Display Ascensore (`elevator_view.html`)
-
-Mostra le informazioni per un piano specifico.
-
-* **URL:** `http://localhost/wayfinding/elevator_view.html?floor=1_PRIMO_PIANO&content=AULE_1-5,SEGRETERIA`
-
-* **Parametri Disponibili:**
-
-| Parametro  | Descrizione                                                               | Esempio                            |
-| :--------- | :------------------------------------------------------------------------ | :--------------------------------- |
-| `floor`    | Il numero e il nome del piano, separati da `_`.                           | `floor=1_PRIMO_PIANO`              |
-| `content`  | Elenco degli uffici/aule presenti sul piano, separati da virgola.          | `content=AULE_1-5,SEGRETERIA`      |
-| `location` | L'edificio o la posizione attuale, mostrata in basso a destra.            | `location=EDIFICIO_B`              |
+- ✅ **Due Viste Distinte**: Fornisce layout ottimizzati per indicazioni con frecce e per informazioni da ascensore.
+- ⚙️ **Altamente Configurabile**: Il testo, la direzione delle frecce e il contenuto delle liste sono interamente controllati tramite parametri URL.
+- 🌐 **Multilingua**: Supporta il cambio dinamico tra Italiano e Inglese per le etichette predefinite.
+- 🕒 **Ora Sincronizzata**: L'orologio visualizzato è sincronizzato con il `time-service` centrale per garantire coerenza su tutti i display.
+- 🛡️ **Sicurezza**: Include `Talisman` con una Content Security Policy (CSP) per proteggere da attacchi XSS.
+- 🐳 **Containerizzato**: Completamente gestito tramite Docker e Docker Compose.
+- 🧪 **Testato**: Include una suite di test `pytest` per verificare il corretto funzionamento delle rotte.
 
 ---
 
 ## Tecnologie Utilizzate
 
-* **Backend**: Python, Flask, Gunicorn
-* **Frontend**: HTML5, CSS3, JavaScript
-* **Deployment**: Docker
+- **Backend**: Python 3.11, Flask, Gunicorn
+- **Frontend**: HTML5, CSS3, JavaScript (con animazioni Lottie)
+- **Containerizzazione**: Docker, Docker Compose
+- **Sicurezza**: Flask-Talisman, Flask-Cors
+- **Testing**: Pytest
 
 ---
 
-## Autori
+## Struttura della Directory
+```
+wayfinding-service/
+├── app/
+│   ├── __init__.py       # Application factory
+│   ├── config.py         # Caricamento configurazione (attualmente vuoto)
+│   └── routes.py         # Definizione delle rotte per servire le pagine e l'health check
+│
+├── tests/
+│   ├── __init__.py
+│   └── test_wayfinding_api.py # Test per le rotte
+│
+├── ui/
+│   ├── assets/           # Animazione Lottie (arrow.json), icone e immagini
+│   ├── static/
+│   │   ├── css/          # Fogli di stile per le viste
+│   │   └── js/           # Script per la logica del frontend
+│   ├── arrow_view.html
+│   └── elevator_view.html
+│
+├── .env.example
+├── Dockerfile
+├── requirements.txt
+└── run.py
+```
 
-Massimo Mantineo – Università degli Studi di Messina
+---
+
+## Prerequisiti
+
+- [Docker Engine](https://docs.docker.com/engine/install/)
+- [Docker Compose V2](https://docs.docker.com/compose/install/)
+
+---
+
+## Guida all'Installazione
+
+1.  **Clona il Repository**.
+2.  **Avvia lo Stack Docker**: Dalla cartella principale `DigitalSignageSuite`, esegui:
+    ```bash
+    docker compose up --build -d
+    ```
+    *(Questo servizio non richiede un file .env per funzionare nella sua versione statica).*
+
+---
+
+## Utilizzo e Parametri URL
+
+L'aspetto di ogni display è controllato dai parametri aggiunti all'URL.
+
+### Vista Frecce (`arrow_view.html`)
+
+- **URL Base:** `http://<IP_SERVER>/wayfinding/arrow_view.html`
+- **Parametri:**
+    - `left`, `center`, `right`: Testo da visualizzare per ciascuna freccia (es. `AULE_A-1`). L'underscore `_` viene convertito in spazio.
+    - `leftDirection`, `centerDirection`, `rightDirection`: Direzione della freccia. Valori possibili: `up`, `down`, `left`, `right`, `up-left`, `up-right`, `down-left`, `down-right`. (Default: `down`).
+    - `location`: Testo da mostrare in basso a destra (es. `Blocco_A`).
+
+- **Esempio:**
+  ```
+  http://localhost/wayfinding/arrow_view.html?left=AULE_A-1&leftDirection=left&center=USCITA&centerDirection=up&location=Blocco_A
+  ```
+
+### Vista Ascensore (`elevator_view.html`)
+
+- **URL Base:** `http://<IP_SERVER>/wayfinding/elevator_view.html`
+- **Parametri:**
+    - `floor`: Titolo e numero del piano (es. `1_PRIMO_PIANO`).
+    - `content`: Lista di elementi da visualizzare, separati da virgola (es. `AULE,STUDI_DOCENTI,SEGRETERIA`).
+    - `location`: Testo da mostrare in basso a destra.
+
+- **Esempio:**
+  ```
+  http://localhost/wayfinding/elevator_view.html?floor=1_PRIMO_PIANO&content=SEGRETERIA_STUDENTI,AULE_A-1-1_A-1-8,STUDI_DOCENTI&location=Edificio_A
+  ```
+
+---
+
+## Esecuzione dei Test
+Assicurati che lo stack Docker sia in esecuzione. Poi, esegui:
+```bash
+cd wayfinding-service
+pytest
+```
+
+---
+
+## Come Contribuire
+
+I contributi sono sempre i benvenuti! Per contribuire:
+1.  Fai un fork del repository.
+2.  Crea un nuovo branch (`git checkout -b feature/nome-feature`).
+3.  Fai le tue modifiche e assicurati che i test passino (`pytest`).
+4.  Fai il commit delle tue modifiche (`git commit -am 'Aggiungi nuova feature'`).
+5.  Fai il push sul tuo branch (`git push origin feature/nome-feature`).
+6.  Apri una Pull Request.
+
+---
+
+## Licenza
+Questo progetto è rilasciato sotto la Licenza MIT.

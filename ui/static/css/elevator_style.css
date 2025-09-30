@@ -1,4 +1,11 @@
-/* General body and background styling */
+/*
+ * EN: Main stylesheet for the Elevator Information Display.
+ * IT: Foglio di stile principale per il Display Informativo dell'Ascensore.
+ */
+
+/* ==========================================================================
+   General Body and Layout
+   ========================================================================== */
 body {
   margin: 0;
   padding: 0;
@@ -12,11 +19,14 @@ body {
   overflow: hidden;
 }
 
-/* Nasconde la lingua non attiva */
+/* EN: Hides the span of the non-active language. */
+/* IT: Nasconde lo span della lingua non attiva. */
 body.lang-en .lang-it { display: none; }
 body.lang-it .lang-en { display: none; }
 
-/* Contenitore principale */
+/* ==========================================================================
+   Main Content Container
+   ========================================================================== */
 .elevator-container {
   display: flex;
   flex-direction: column;
@@ -26,7 +36,8 @@ body.lang-it .lang-en { display: none; }
   padding: 40px 60px;
 }
 
-/* Header con numero e titolo del piano */
+/* EN: Header with the floor number and title. */
+/* IT: Intestazione con il numero e il titolo del piano. */
 .floor-header {
   display: flex;
   align-items: center;
@@ -35,7 +46,6 @@ body.lang-it .lang-en { display: none; }
   flex-shrink: 0; 
   margin-bottom: 30px;
 }
-
 .floor-number {
   flex-shrink: 0;
   width: 95px;
@@ -50,7 +60,6 @@ body.lang-it .lang-en { display: none; }
   font-size: 80px;
   margin-right: 35px;
 }
-
 .floor-title {
   margin: 0;
   font-weight: 800;
@@ -59,7 +68,8 @@ body.lang-it .lang-en { display: none; }
   line-height: 1;
 }
 
-/* Lista dei contenuti del piano */
+/* EN: List of departments, offices, etc. on the floor. */
+/* IT: Lista di dipartimenti, uffici, ecc. presenti al piano. */
 .content-list {
   color: #3c7cbb;
   width: 100%;
@@ -68,12 +78,12 @@ body.lang-it .lang-en { display: none; }
   overflow: hidden;
   line-height: 1.4;
 }
-
+/* EN: If the list is long, it splits into two columns. */
+/* IT: Se la lista è lunga, viene divisa in due colonne. */
 .content-list.multi-column {
   column-count: 2;
   column-gap: 60px;
 }
-
 .content-item {
   position: relative;
   padding-left: 1.5em;
@@ -82,11 +92,9 @@ body.lang-it .lang-en { display: none; }
   padding-bottom: 0.5em;
   font-size: 57px; 
 }
-
 .content-list.multi-column .content-item {
   font-size: 38px;
 }
-
 .content-item::before {
   content: '–';
   position: absolute;
@@ -95,20 +103,18 @@ body.lang-it .lang-en { display: none; }
   font-weight: 600;
 }
 
-/* Elementi overlay (orologio, data, ecc.) */
+/* ==========================================================================
+   Overlay & Loader Elements (Consistent across all services)
+   ========================================================================== */
 .top-right, .bottom-left, .bottom-right {
   position: absolute;
   font-weight: bold;
   color: #ffffff;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
 }
-.top-right { top: 20px; right: 30px; font-size: 6em; }
-.bottom-left { bottom: 40px; left: 30px; font-size: 4em; }
-.bottom-right { bottom: 40px; right: 30px; font-size: 4em; text-align: right; }
-
-
-/* ======================================== */
-/* NUOVO: Stili per la Schermata di Caricamento */
-/* ======================================== */
+.top-right { top: 20px; right: 30px; font-size: 96px; }
+.bottom-left { bottom: 40px; left: 30px; font-size: 64px; }
+.bottom-right { bottom: 40px; right: 30px; font-size: 64px; text-align: right; }
 
 #loader {
     position: absolute;
@@ -117,7 +123,7 @@ body.lang-it .lang-en { display: none; }
     width: 100%;
     height: 100%;
     z-index: 9999;
-    background-color: #0a2b5e; /* Colore blu scuro standard */
+    background-color: #0a2b5e;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,12 +131,10 @@ body.lang-it .lang-en { display: none; }
     visibility: visible;
     transition: opacity 1s ease, visibility 1s ease;
 }
-
 #loader.hidden {
     opacity: 0;
     visibility: hidden;
 }
-
 .spinner-container {
     position: relative;
     width: 300px;
@@ -139,22 +143,17 @@ body.lang-it .lang-en { display: none; }
     justify-content: center;
     align-items: center;
 }
-
 .spinner {
     position: absolute;
     width: 100%;
     height: 100%;
     border: 12px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #FFFFFF; /* Colore bianco */
+    border-top-color: #FFFFFF;
     border-radius: 50%;
     animation: spin 1s infinite ease-in-out;
 }
-
 .spinner-logo {
     width: 250px;
     height: auto;
 }
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }

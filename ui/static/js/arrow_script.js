@@ -1,30 +1,32 @@
 /**
- * Script for the Directional Arrow Signage view - MODIFIED FOR UNIFIED TIME
+ * Script for the STATIC Directional Arrow Signage view.
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Riferimenti al DOM ---
-    var dom = {
+    // EN: DOM element references. / IT: Riferimenti agli elementi del DOM.
+    const dom = {
         clock: document.getElementById('clock'),
         date: document.getElementById('current-date'),
         location: document.getElementById('location-label'),
         container: document.querySelector('.container'),
-        body: document.body
+        body: document.body,
+        loader: document.getElementById('loader')
     };
 
-    // --- Stato e Configurazione ---
-    var state = {
+    // EN: Application state. / IT: Stato dell'applicazione.
+    const state = {
         currentLanguage: 'it',
-        timeDifference: 0 // NUOVO: Differenza tra ora server e ora locale
+        timeDifference: 0
     };
 
-    var config = {
-        languageToggleInterval: 15, // in secondi
-        // NUOVO: URL del time service e intervallo di re-sync
-        timeServiceUrl: 'http://172.16.32.13/api/time/', // !!! SOSTITUIRE con l'IP del server !!!
+    // EN: Static configuration. / IT: Configurazione statica.
+    const config = {
+        languageToggleInterval: 15,
+        timeServiceUrl: '/api/time/',
         dataRefreshInterval: 5 * 60
     };
 
-    var translations = {
+    // EN: Translation strings. / IT: Stringhe per la traduzione.
+    const translations = {
         it: {
             days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
             months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
@@ -37,116 +39,121 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    var padZero = function(n) { return n < 10 ? '0' + n : String(n); };
-
+    /**
+     * EN: Translates a static label from the URL parameter (e.g., "AULE_1-10").
+     * IT: Traduce un'etichetta statica dal parametro URL (es. "AULE_1-10").
+     */
     function translateText(text) {
         if (!text) return { line1: '', line2: '' };
-        var parts = text.split('_');
-        var langWords = translations[state.currentLanguage].words;
-        var line1 = langWords[parts[0].toUpperCase()] || parts[0];
-        var line2 = parts.slice(1).join(' ');
+        const parts = text.split('_');
+        const langWords = translations[state.currentLanguage].words;
+        const line1 = langWords[parts[0].toUpperCase()] || parts[0];
+        const line2 = parts.slice(1).join(' ');
         return { line1: line1, line2: line2 };
     }
 
-    // NUOVA FUNZIONE per sincronizzare l'orario con il server
+    /**
+     * EN: Syncs time with the server.
+     * IT: Sincronizza l'ora con il server.
+     */
     function syncTimeWithServer() {
         fetch(config.timeServiceUrl)
-            .then(function(response) { if (!response.ok) throw new Error('Time API failed'); return response.json(); })
-            .then(function(data) {
+            .then(response => { if (!response.ok) throw new Error('Time API failed'); return response.json(); })
+            .then(data => {
                 state.timeDifference = new Date(data.time) - new Date();
-                dom.clock.style.color = ''; // Rimuove il colore rosso se la sync ha successo
+                dom.clock.style.color = '';
             })
-            .catch(function(error) {
+            .catch(error => {
                 console.error('Could not sync time:', error);
                 state.timeDifference = 0;
                 dom.clock.style.color = 'red';
             });
     }
 
-    // MODIFICATO: Aggiorna orologio e data con l'ora del server
+    /**
+     * EN: Updates the clock and date display using Rome's timezone.
+     * IT: Aggiorna l'orologio e la data usando il fuso orario di Roma.
+     */
     function updateTimeDisplay() {
-        var serverTime = new Date(new Date().getTime() + state.timeDifference);
-        var lang = translations[state.currentLanguage];
+        const serverTime = new Date(new Date().getTime() + state.timeDifference);
+        const timeOptions = { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        dom.clock.textContent = serverTime.toLocaleTimeString('it-IT', timeOptions);
         
-        // Aggiorna l'orologio (UTC)
-        dom.clock.textContent = padZero(serverTime.getUTCHours()) + ':' + padZero(serverTime.getUTCMinutes()) + ':' + padZero(serverTime.getUTCSeconds());
-        
-        // Aggiorna la data (UTC)
-        dom.date.textContent = lang.days[serverTime.getUTCDay()] + ' ' + serverTime.getUTCDate() + ' ' + lang.months[serverTime.getUTCMonth()] + ' ' + serverTime.getUTCFullYear();
+        const dateOptions = { timeZone: 'Europe/Rome', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const locale = (state.currentLanguage === 'it') ? 'it-IT' : 'en-GB';
+        const formattedDate = serverTime.toLocaleDateString(locale, dateOptions);
+        dom.date.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     }
-
+    
+    /**
+     * EN: Reads URL parameters and updates the static labels on the page.
+     * IT: Legge i parametri URL e aggiorna le etichette statiche sulla pagina.
+     */
     function updateStaticUI() {
-        var params = new URLSearchParams(window.location.search);
-        ['left', 'center', 'right'].forEach(function(side) {
-            var labelText = params.get(side);
-            var container = document.getElementById(side + '-container');
+        const params = new URLSearchParams(window.location.search);
+        ['left', 'center', 'right'].forEach(side => {
+            const labelText = params.get(side);
+            const container = document.getElementById(`${side}-container`);
             if (labelText && container) {
-                var translated = translateText(labelText);
+                const translated = translateText(labelText);
                 container.querySelector('.label-line1').textContent = translated.line1;
                 container.querySelector('.label-line2').textContent = translated.line2;
             }
         });
-        var locationText = params.get('location');
+        const locationText = params.get('location');
         if (locationText) {
-            var translatedLocation = translateText(locationText);
+            const translatedLocation = translateText(locationText);
             dom.location.innerHTML = (translatedLocation.line1 + ' ' + translatedLocation.line2).trim();
         }
     }
-
+    
+    /**
+     * EN: Toggles language and updates static text.
+     * IT: Cambia lingua e aggiorna il testo statico.
+     */
     function toggleLanguage() {
         state.currentLanguage = (state.currentLanguage === 'en') ? 'it' : 'en';
         dom.body.className = 'lang-' + state.currentLanguage;
         updateStaticUI();
     }
 
-    window.onload = function() {
-        var loader = document.getElementById('loader');
-        if (loader) { loader.classList.add('hidden'); }
-    };
+    window.onload = () => { if (dom.loader) dom.loader.classList.add('hidden'); };
 
-    // MODIFICATO: Funzione di avvio
+    /**
+     * EN: Main initialization function.
+     * IT: Funzione di inizializzazione principale.
+     */
     function init() {
-        var params = new URLSearchParams(window.location.search);
-        var sides = ['left', 'center', 'right'];
-        var directions = { 'down': 0, 'down-left': 45, 'left': 90, 'up-left': 135, 'up': 180, 'up-right': 225, 'right': 270, 'down-right': 315 };
-        var visibleCount = 0;
-
-        sides.forEach(function(side) {
-            var labelText = params.get(side);
+        const params = new URLSearchParams(window.location.search);
+        const sides = ['left', 'center', 'right'];
+        const directions = { 'down': 0, 'down-left': 45, 'left': 90, 'up-left': 135, 'up': 180, 'up-right': 225, 'right': 270, 'down-right': 315 };
+        
+        sides.forEach(side => {
+            const labelText = params.get(side);
             if (!labelText) return;
-            visibleCount++;
-            var container = document.getElementById(side + '-container');
-            container.style.display = 'flex';
-            var arrowEl = document.getElementById(side + '-arrow');
-            var direction = params.get(side + 'Direction') || 'down';
-            arrowEl.style.transform = 'rotate(' + (directions[direction] || 0) + 'deg)';
-            try {
-                if (lottie) { lottie.loadAnimation({ container: arrowEl, renderer: 'svg', loop: true, autoplay: true, path: '/wayfinding/assets/arrow.json' }); }
-            } catch (e) { console.error("Lottie animation failed:", e); }
-        });
 
-        if (visibleCount === 2) { dom.container.classList.add('two-items'); }
+            const container = document.getElementById(`${side}-container`);
+            container.style.display = 'flex';
+            
+            const arrowEl = document.getElementById(`${side}-arrow`);
+            const direction = params.get(`${side}Direction`) || 'down';
+            arrowEl.style.transform = `rotate(${directions[direction] || 0}deg)`;
+            lottie.loadAnimation({ container: arrowEl, renderer: 'svg', loop: true, autoplay: true, path: '/wayfinding/assets/arrow.json' });
+        });
 
         dom.body.className = 'lang-' + state.currentLanguage;
         updateStaticUI();
-        syncTimeWithServer(); // Sincronizza all'avvio
+        syncTimeWithServer();
 
-        var secondsCounter = 0;
-        setInterval(function() {
-            try {
-                secondsCounter++;
-                updateTimeDisplay(); // Aggiorna ora e data sincronizzate
-
-                if (secondsCounter % config.languageToggleInterval === 0) {
-                    toggleLanguage();
-                }
-                if (secondsCounter % config.dataRefreshInterval === 0) {
-                    syncTimeWithServer(); // Risincronizza periodicamente
-                }
-            } catch (e) { console.error("Errore nell'intervallo principale:", e); }
+        let secondsCounter = 0;
+        setInterval(() => {
+            secondsCounter++;
+            updateTimeDisplay();
+            if (secondsCounter % config.languageToggleInterval === 0) toggleLanguage();
+            if (secondsCounter % config.dataRefreshInterval === 0) syncTimeWithServer();
         }, 1000);
 
-        setTimeout(function() { window.location.reload(true); }, 4 * 60 * 60 * 1000);
+        setTimeout(() => window.location.reload(true), 4 * 60 * 60 * 1000);
     }
 
     init();

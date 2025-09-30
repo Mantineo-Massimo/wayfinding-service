@@ -1,12 +1,24 @@
-/* General body and background styling */
+/*
+ * EN: Main stylesheet for the Directional Arrow Signage view.
+ * This layout is designed for a fixed 1920x1080 resolution display.
+ *
+ * IT: Foglio di stile principale per la vista delle Frecce Direzionali.
+ * Questo layout è progettato per un display a risoluzione fissa 1920x1080.
+ */
+
+/* ==========================================================================
+   General Body and Layout
+   ========================================================================== */
 body {
   margin: 0;
   padding: 0;
   background: url('../../assets/monitor_background.png') center/cover no-repeat fixed;
   font-family: 'Calibri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff;
-  height: 1080px; /* Altezza fissa */
-  width: 1920px;  /* Larghezza fissa */
+  /* EN: Fixed resolution for signage displays. */
+  /* IT: Risoluzione fissa per i display di signage. */
+  height: 1080px;
+  width: 1920px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,19 +26,26 @@ body {
   overflow: hidden;
 }
 
-/* Nasconde la lingua non attiva */
+/* EN: Hides the span of the non-active language. */
+/* IT: Nasconde lo span della lingua non attiva. */
 body.lang-en .lang-it { display: none; }
 body.lang-it .lang-en { display: none; }
 
-/* Contenitore principale per le frecce */
+/* ==========================================================================
+   Main Content Container
+   ========================================================================== */
+/* EN: Main container for the arrows, uses Flexbox for alignment. */
+/* IT: Contenitore principale per le frecce, usa Flexbox per l'allineamento. */
 .container {
   display: flex;
-  align-items: center; /* <-- Allinea verticalmente al centro */
-  justify-content: space-around; /* <-- Distribuisce lo spazio orizzontalmente */
-  width: 90%; /* Aumenta leggermente lo spazio laterale */
-  height: 90%; /* Occupa tutta l'altezza per un centraggio migliore */
+  align-items: center;
+  justify-content: space-around;
+  width: 90%;
+  height: 90%;
 }
-/* Singolo blocco freccia + etichetta */
+
+/* EN: A single block containing one label and one arrow animation. */
+/* IT: Un singolo blocco che contiene un'etichetta e un'animazione della freccia. */
 .arrow-container {
   flex: 0 1 auto;
   max-width: 550px;
@@ -35,7 +54,8 @@ body.lang-it .lang-en { display: none; }
   align-items: center;
 }
 
-/* Stile per le etichette */
+/* EN: Styles for the text labels above the arrows. */
+/* IT: Stili per le etichette di testo sopra le frecce. */
 .label {
   text-align: center;
   white-space: nowrap;
@@ -43,41 +63,36 @@ body.lang-it .lang-en { display: none; }
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
 }
 .label-line1 {
-  /* MODIFICA: Dimensione del font fissa in pixel */
-  font-size: 115px;
+  font-size: 115px; /* Fixed font size */
   font-weight: 500;
   line-height: 1;
 }
 .label-line2 {
-  /* MODIFICA: Dimensione del font fissa in pixel */
-  font-size: 150px;
+  font-size: 150px; /* Fixed font size */
   font-weight: 700;
   line-height: 1.1;
 }
 
-/* Animazione della freccia */
+/* EN: Container for the Lottie animation. */
+/* IT: Contenitore per l'animazione Lottie. */
 .arrow {
-  /* MODIFICA: Dimensione fissa in pixel */
   width: 400px;
   max-width: 400px;
   height: auto;
 }
 
-/* Elementi overlay (orologio, data, ecc.) */
+/* ==========================================================================
+   Overlay & Loader Elements (Consistent across all services)
+   ========================================================================== */
 .top-right, .bottom-left, .bottom-right {
   position: absolute;
   font-weight: bold;
   color: #ffffff;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
 }
-/* MODIFICA: Dimensioni e posizioni in pixel per overlay */
-.top-right { top: 20px; right: 30px; font-size: 96px; } /* ~6em */
-.bottom-left { bottom: 40px; left: 30px; font-size: 64px; } /* ~4em */
-.bottom-right { bottom: 40px; right: 30px; font-size: 64px; text-align: right; } /* ~4em */
-
-
-/* ======================================== */
-/* Stili per la Schermata di Caricamento    */
-/* ======================================== */
+.top-right { top: 20px; right: 30px; font-size: 96px; }
+.bottom-left { bottom: 40px; left: 30px; font-size: 64px; }
+.bottom-right { bottom: 40px; right: 30px; font-size: 64px; text-align: right; }
 
 #loader {
     position: absolute;
@@ -94,12 +109,10 @@ body.lang-it .lang-en { display: none; }
     visibility: visible;
     transition: opacity 1s ease, visibility 1s ease;
 }
-
 #loader.hidden {
     opacity: 0;
     visibility: hidden;
 }
-
 .spinner-container {
     position: relative;
     width: 300px;
@@ -108,7 +121,6 @@ body.lang-it .lang-en { display: none; }
     justify-content: center;
     align-items: center;
 }
-
 .spinner {
     position: absolute;
     width: 100%;
@@ -118,12 +130,10 @@ body.lang-it .lang-en { display: none; }
     border-radius: 50%;
     animation: spin 1s infinite ease-in-out;
 }
-
 .spinner-logo {
     width: 250px;
     height: auto;
 }
-
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
