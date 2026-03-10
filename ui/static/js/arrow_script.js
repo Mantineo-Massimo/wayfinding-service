@@ -1,7 +1,7 @@
 /**
  * Script for the STATIC Directional Arrow Signage view.
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // EN: DOM element references. / IT: Riferimenti agli elementi del DOM.
     const dom = {
         clock: document.getElementById('clock'),
@@ -78,13 +78,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const serverTime = new Date(new Date().getTime() + state.timeDifference);
         const timeOptions = { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         dom.clock.textContent = serverTime.toLocaleTimeString('it-IT', timeOptions);
-        
+
         const dateOptions = { timeZone: 'Europe/Rome', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const locale = (state.currentLanguage === 'it') ? 'it-IT' : 'en-GB';
         const formattedDate = serverTime.toLocaleDateString(locale, dateOptions);
         dom.date.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     }
-    
+
     /**
      * EN: Reads URL parameters and updates the static labels on the page.
      * IT: Legge i parametri URL e aggiorna le etichette statiche sulla pagina.
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dom.location.innerHTML = (translatedLocation.line1 + ' ' + translatedLocation.line2).trim();
         }
     }
-    
+
     /**
      * EN: Toggles language and updates static text.
      * IT: Cambia lingua e aggiorna il testo statico.
@@ -127,18 +127,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams(window.location.search);
         const sides = ['left', 'center', 'right'];
         const directions = { 'down': 0, 'down-left': 45, 'left': 90, 'up-left': 135, 'up': 180, 'up-right': 225, 'right': 270, 'down-right': 315 };
-        
+
         sides.forEach(side => {
             const labelText = params.get(side);
             if (!labelText) return;
 
             const container = document.getElementById(`${side}-container`);
             container.style.display = 'flex';
-            
+
             const arrowEl = document.getElementById(`${side}-arrow`);
             const direction = params.get(`${side}Direction`) || 'down';
             arrowEl.style.transform = `rotate(${directions[direction] || 0}deg)`;
-            lottie.loadAnimation({ container: arrowEl, renderer: 'svg', loop: true, autoplay: true, path: '/wayfinding/assets/arrow.json' });
+            lottie.loadAnimation({ container: arrowEl, renderer: 'canvas', loop: true, autoplay: true, path: '/wayfinding/assets/arrow.json' });
         });
 
         dom.body.className = 'lang-' + state.currentLanguage;

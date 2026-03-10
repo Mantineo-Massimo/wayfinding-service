@@ -32,10 +32,70 @@ document.addEventListener('DOMContentLoaded', function() {
     // IT: Stringhe per la traduzione di tutto il testo statico.
     const translations = {
         it: {
-            phrases: { "PRIMO PIANO": "Primo Piano", "SECONDO PIANO": "Secondo Piano", "PIANO TERRA": "Piano Terra", "SEGRETERIA STUDENTI": "Segreteria Studenti", "AULE": "Aule", "STUDI DOCENTI": "Studi Docenti", "EDIFICIO": "Edificio", "BLOCCO 3": "Blocco 3", "AULE A-1-1 A-1-8": "Aule da A-1-1 a A-1-8", "LABORATORI RICERCA": "Laboratori di Ricerca", "SEGRETERIA AMMINISTRATIVA MIFT": "Segreteria Amministrativa Dipartimento MIFT", "DIREZIONE MIFT": "Direzione Dipartimento MIFT", "DIPARTIMENTO CHIBIOFARAM": "Dipartimento CHIBIOFARAM" }
+            phrases: { 
+                "PRIMO PIANO": "Primo Piano", 
+                "SECONDO PIANO": "Secondo Piano", 
+                "PIANO TERRA": "Piano Terra", 
+                "SEGRETERIA STUDENTI": "Segreteria Studenti", 
+                "AULE": "Aule", 
+                "STUDI DOCENTI": "Studi Docenti", 
+                "EDIFICIO": "Edificio", 
+                "BLOCCO 3": "Blocco 3", 
+                "AULE A-1-1 A-1-8": "Aule da A-1-1 a A-1-8", 
+                "LABORATORI RICERCA": "Laboratori di Ricerca", 
+                "SEGRETERIA AMMINISTRATIVA MIFT": "Segreteria Amministrativa Dipartimento MIFT", 
+                "DIREZIONE MIFT": "Direzione Dipartimento MIFT", 
+                "DIPARTIMENTO CHIBIOFARAM": "Dipartimento CHIBIOFARAM",
+                // --- NUOVE TRADUZIONI ---
+                "QUARTO PIANO": "Quarto Piano",
+                "SEGRETERIA AMMINISTRATIVA CHIBIOFARAM": "Segreteria Amministrativa CHIBIOFARAM",
+                "UFFICI PTA": "Uffici PTA",
+                "CORPO 3": "Corpo 3",
+                "TERZO PIANO": "Terzo Piano",
+                "AULA A-3-1": "Aula A-3-1",
+                "BLOCCO D": "Blocco D",
+                "SEGRETERIA DIDATTICA CHIBIOFARAM": "Segreteria Didattica CHIBIOFARAM",
+                "BLOCCO C": "Blocco C",
+                "BLOCCO B": "Blocco B",
+                "AULE DA A-S-1 A A-S-8": "Aule da A-S-1 a A-S-8",
+                "AULE DA A-T-1 A A-T-11": "Aule da A-T-1 a A-T-11",
+                "LABORATORI DI RICERCA": "Laboratori di Ricerca",
+                "AREA STUDENTI": "Area Studenti",
+                "BLOCCO A": "Blocco A"
+            }
         },
         en: {
-            phrases: { "PRIMO PIANO": "First Floor", "SECONDO PIANO": "Second Floor", "PIANO TERRA": "Ground Floor", "SEGRETERIA STUDENTI": "Student Secretariat", "AULE": "Classrooms", "STUDI DOCENTI": "Professor Offices", "EDIFICIO": "Building", "BLOCCO 3": "Block 3", "AULE A-1-1 A-1-8": "Classrooms A-1-1 to A-1-8", "LABORATORI RICERCA": "Research Laboratories", "SEGRETERIA AMMINISTRATIVA MIFT": "Administrative Secretariat of the MIFT Department", "DIREZIONE MIFT": "Direction of the MIFT Department", "DIPARTIMENTO CHIBIOFARAM": "CHIBIOFARAM Department" }
+            phrases: { 
+                "PRIMO PIANO": "First Floor", 
+                "SECONDO PIANO": "Second Floor", 
+                "PIANO TERRA": "Ground Floor", 
+                "SEGRETERIA STUDENTI": "Student Secretariat", 
+                "AULE": "Classrooms", 
+                "STUDI DOCENTI": "Professor Offices", 
+                "EDIFICIO": "Building", 
+                "BLOCCO 3": "Block 3", 
+                "AULE A-1-1 A-1-8": "Classrooms A-1-1 to A-1-8", 
+                "LABORATORI RICERCA": "Research Laboratories", 
+                "SEGRETERIA AMMINISTRATIVA MIFT": "Administrative Secretariat of the MIFT Department", 
+                "DIREZIONE MIFT": "Direction of the MIFT Department", 
+                "DIPARTIMENTO CHIBIOFARAM": "CHIBIOFARAM Department",
+                // --- NEW TRANSLATIONS ---
+                "QUARTO PIANO": "Fourth Floor",
+                "SEGRETERIA AMMINISTRATIVA CHIBIOFARAM": "Administrative Secretariat CHIBIOFARAM",
+                "UFFICI PTA": "PTA Offices",
+                "CORPO 3": "Building 3",
+                "TERZO PIANO": "Third Floor",
+                "AULA A-3-1": "Classroom A-3-1",
+                "BLOCCO D": "Block D",
+                "SEGRETERIA DIDATTICA CHIBIOFARAM": "Didactic Secretariat CHIBIOFARAM",
+                "BLOCCO C": "Block C",
+                "BLOCCO B": "Block B",
+                "AULE DA A-S-1 A A-S-8": "Classrooms A-S-1 to A-S-8",
+                "AULE DA A-T-1 A A-T-11": "Classrooms A-T-1 to A-T-11",
+                "LABORATORI DI RICERCA": "Research Laboratories",
+                "AREA STUDENTI": "Student Area",
+                "BLOCCO A": "Block A"
+            }
         }
     };
 
@@ -127,7 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const locationText = params.get('location');
         if (locationText) dom.location.textContent = translatePhrase(locationText);
-        fitContent();
+        
+        setTimeout(fitContent, 100); 
     }
     
     /**
