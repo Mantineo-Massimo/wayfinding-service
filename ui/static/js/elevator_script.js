@@ -4,7 +4,7 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
     // EN: DOM element references. / IT: Riferimenti agli elementi del DOM.
-    const dom = {
+    var dom = {
         clock: document.getElementById('clock'),
         date: document.getElementById('current-date'),
         location: document.getElementById('location-label'),
@@ -16,13 +16,20 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // EN: Application state. / IT: Stato dell'applicazione.
-    const state = {
+    var state = {
         currentLanguage: 'it',
-        timeDifference: 0
+        timeDifference: 0,
+        /**
+         * EN: Helper to get URL parameters without URLSearchParams.
+         */
+        getUrlParameter: function(name) {
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
     };
 
     // EN: Static configuration. / IT: Configurazione statica.
-    const config = {
+    var config = {
         languageToggleInterval: 15,
         timeServiceUrl: '/api/time/',
         dataRefreshInterval: 5 * 60
@@ -30,12 +37,72 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // EN: Translation strings for all static text.
     // IT: Stringhe per la traduzione di tutto il testo statico.
-    const translations = {
+    var translations = {
         it: {
-            phrases: { "PRIMO PIANO": "Primo Piano", "SECONDO PIANO": "Secondo Piano", "PIANO TERRA": "Piano Terra", "SEGRETERIA STUDENTI": "Segreteria Studenti", "AULE": "Aule", "STUDI DOCENTI": "Studi Docenti", "EDIFICIO": "Edificio", "BLOCCO 3": "Blocco 3", "AULE A-1-1 A-1-8": "Aule da A-1-1 a A-1-8", "LABORATORI RICERCA": "Laboratori di Ricerca", "SEGRETERIA AMMINISTRATIVA MIFT": "Segreteria Amministrativa Dipartimento MIFT", "DIREZIONE MIFT": "Direzione Dipartimento MIFT", "DIPARTIMENTO CHIBIOFARAM": "Dipartimento CHIBIOFARAM" }
+            phrases: { 
+                "PRIMO PIANO": "Primo Piano", 
+                "SECONDO PIANO": "Secondo Piano", 
+                "PIANO TERRA": "Piano Terra", 
+                "SEGRETERIA STUDENTI": "Segreteria Studenti", 
+                "AULE": "Aule", 
+                "STUDI DOCENTI": "Studi Docenti", 
+                "EDIFICIO": "Edificio", 
+                "BLOCCO 3": "Blocco 3", 
+                "AULE A-1-1 A-1-8": "Aule da A-1-1 a A-1-8", 
+                "LABORATORI RICERCA": "Laboratori di Ricerca", 
+                "SEGRETERIA AMMINISTRATIVA MIFT": "Segreteria Amministrativa Dipartimento MIFT", 
+                "DIREZIONE MIFT": "Direzione Dipartimento MIFT", 
+                "DIPARTIMENTO CHIBIOFARAM": "Dipartimento CHIBIOFARAM",
+                // --- NUOVE TRADUZIONI ---
+                "QUARTO PIANO": "Quarto Piano",
+                "SEGRETERIA AMMINISTRATIVA CHIBIOFARAM": "Segreteria Amministrativa CHIBIOFARAM",
+                "UFFICI PTA": "Uffici PTA",
+                "CORPO 3": "Corpo 3",
+                "TERZO PIANO": "Terzo Piano",
+                "AULA A-3-1": "Aula A-3-1",
+                "BLOCCO D": "Blocco D",
+                "SEGRETERIA DIDATTICA CHIBIOFARAM": "Segreteria Didattica CHIBIOFARAM",
+                "BLOCCO C": "Blocco C",
+                "BLOCCO B": "Blocco B",
+                "AULE DA A-S-1 A A-S-8": "Aule da A-S-1 a A-S-8",
+                "AULE DA A-T-1 A A-T-11": "Aule da A-T-1 a A-T-11",
+                "LABORATORI DI RICERCA": "Laboratori di Ricerca",
+                "AREA STUDENTI": "Area Studenti",
+                "BLOCCO A": "Blocco A"
+            }
         },
         en: {
-            phrases: { "PRIMO PIANO": "First Floor", "SECONDO PIANO": "Second Floor", "PIANO TERRA": "Ground Floor", "SEGRETERIA STUDENTI": "Student Secretariat", "AULE": "Classrooms", "STUDI DOCENTI": "Professor Offices", "EDIFICIO": "Building", "BLOCCO 3": "Block 3", "AULE A-1-1 A-1-8": "Classrooms A-1-1 to A-1-8", "LABORATORI RICERCA": "Research Laboratories", "SEGRETERIA AMMINISTRATIVA MIFT": "Administrative Secretariat of the MIFT Department", "DIREZIONE MIFT": "Direction of the MIFT Department", "DIPARTIMENTO CHIBIOFARAM": "CHIBIOFARAM Department" }
+            phrases: { 
+                "PRIMO PIANO": "First Floor", 
+                "SECONDO PIANO": "Second Floor", 
+                "PIANO TERRA": "Ground Floor", 
+                "SEGRETERIA STUDENTI": "Student Secretariat", 
+                "AULE": "Classrooms", 
+                "STUDI DOCENTI": "Professor Offices", 
+                "EDIFICIO": "Building", 
+                "BLOCCO 3": "Block 3", 
+                "AULE A-1-1 A-1-8": "Classrooms A-1-1 to A-1-8", 
+                "LABORATORI RICERCA": "Research Laboratories", 
+                "SEGRETERIA AMMINISTRATIVA MIFT": "Administrative Secretariat of the MIFT Department", 
+                "DIREZIONE MIFT": "Direction of the MIFT Department", 
+                "DIPARTIMENTO CHIBIOFARAM": "CHIBIOFARAM Department",
+                // --- NEW TRANSLATIONS ---
+                "QUARTO PIANO": "Fourth Floor",
+                "SEGRETERIA AMMINISTRATIVA CHIBIOFARAM": "Administrative Secretariat CHIBIOFARAM",
+                "UFFICI PTA": "PTA Offices",
+                "CORPO 3": "Building 3",
+                "TERZO PIANO": "Third Floor",
+                "AULA A-3-1": "Classroom A-3-1",
+                "BLOCCO D": "Block D",
+                "SEGRETERIA DIDATTICA CHIBIOFARAM": "Didactic Secretariat CHIBIOFARAM",
+                "BLOCCO C": "Block C",
+                "BLOCCO B": "Block B",
+                "AULE DA A-S-1 A A-S-8": "Classrooms A-S-1 to A-S-8",
+                "AULE DA A-T-1 A A-T-11": "Classrooms A-T-1 to A-T-11",
+                "LABORATORI DI RICERCA": "Research Laboratories",
+                "AREA STUDENTI": "Student Area",
+                "BLOCCO A": "Block A"
+            }
         }
     };
 
@@ -44,15 +111,15 @@ document.addEventListener('DOMContentLoaded', function() {
      * IT: Regola dinamicamente la dimensione del font per far entrare le liste lunghe nel contenitore.
      */
     function fitContent() {
-        const list = dom.contentList;
-        const items = list.querySelectorAll('.content-item');
+        var list = dom.contentList;
+        var items = list.querySelectorAll('.content-item');
         if (!items || items.length === 0) return;
-        items.forEach(item => item.style.fontSize = '');
+        items.forEach(function(item) { item.style.fontSize = ''; });
         if (list.scrollHeight > list.clientHeight) {
-            const scaleFactor = list.clientHeight / list.scrollHeight;
-            const initialFontSize = parseFloat(window.getComputedStyle(items[0]).fontSize);
-            const newFontSize = Math.floor(initialFontSize * scaleFactor * 0.98);
-            items.forEach(item => item.style.fontSize = `${Math.max(16, newFontSize)}px`);
+            var scaleFactor = list.clientHeight / list.scrollHeight;
+            var initialFontSize = parseFloat(window.getComputedStyle(items[0]).fontSize);
+            var newFontSize = Math.floor(initialFontSize * scaleFactor * 0.98);
+            items.forEach(function(item) { item.style.fontSize = Math.max(16, newFontSize) + 'px'; });
         }
     }
     
@@ -73,12 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function syncTimeWithServer() {
         fetch(config.timeServiceUrl)
-            .then(response => { if (!response.ok) throw new Error('Time API failed'); return response.json(); })
-            .then(data => {
+            .then(function(response) { if (!response.ok) throw new Error('Time API failed'); return response.json(); })
+            .then(function(data) {
                 state.timeDifference = new Date(data.time) - new Date();
                 dom.clock.style.color = '';
             })
-            .catch(error => {
+            .catch(function(error) {
                 console.error('Could not sync time:', error);
                 state.timeDifference = 0;
                 dom.clock.style.color = 'red';
@@ -90,13 +157,13 @@ document.addEventListener('DOMContentLoaded', function() {
      * IT: Aggiorna l'orologio e la data usando il fuso orario di Roma.
      */
     function updateTimeDisplay() {
-        const serverTime = new Date(new Date().getTime() + state.timeDifference);
-        const timeOptions = { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        var serverTime = new Date(new Date().getTime() + state.timeDifference);
+        var timeOptions = { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         dom.clock.textContent = serverTime.toLocaleTimeString('it-IT', timeOptions);
         
-        const dateOptions = { timeZone: 'Europe/Rome', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const locale = (state.currentLanguage === 'it') ? 'it-IT' : 'en-GB';
-        const formattedDate = serverTime.toLocaleDateString(locale, dateOptions);
+        var dateOptions = { timeZone: 'Europe/Rome', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var locale = (state.currentLanguage === 'it') ? 'it-IT' : 'en-GB';
+        var formattedDate = serverTime.toLocaleDateString(locale, dateOptions);
         dom.date.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     }
     
@@ -105,29 +172,29 @@ document.addEventListener('DOMContentLoaded', function() {
      * IT: Legge i parametri URL e aggiorna il contenuto statico della pagina.
      */
     function updateStaticUI() {
-        const params = new URLSearchParams(window.location.search);
-        const floorParam = params.get('floor') || '0_PIANO_TERRA';
-        const floorParts = floorParam.split('_');
+        var floorParam = state.getUrlParameter('floor') || '0_PIANO_TERRA';
+        var floorParts = floorParam.split('_');
         dom.floorNumber.textContent = floorParts[0];
         dom.floorTitle.textContent = translatePhrase(floorParts.slice(1).join('_'));
         
         dom.contentList.innerHTML = '';
-        const contentParam = params.get('content') || 'N/A';
-        const items = contentParam.split(',');
+        var contentParam = state.getUrlParameter('content') || 'N/A';
+        var items = contentParam.split(',');
         dom.contentList.classList.toggle('multi-column', items.length > 5);
         
-        const fragment = document.createDocumentFragment();
-        items.forEach(item => {
-            const div = document.createElement('div');
+        var fragment = document.createDocumentFragment();
+        items.forEach(function(item) {
+            var div = document.createElement('div');
             div.className = 'content-item';
             div.textContent = translatePhrase(item);
             fragment.appendChild(div);
         });
         dom.contentList.appendChild(fragment);
         
-        const locationText = params.get('location');
+        var locationText = state.getUrlParameter('location');
         if (locationText) dom.location.textContent = translatePhrase(locationText);
-        fitContent();
+        
+        setTimeout(fitContent, 100); 
     }
     
     /**
@@ -140,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStaticUI();
     }  
     
-    window.onload = () => { if (dom.loader) dom.loader.classList.add('hidden'); };
+    window.onload = function() { if (dom.loader) dom.loader.classList.add('hidden'); };
 
     /**
      * EN: Main initialization function.
@@ -151,8 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStaticUI();
         syncTimeWithServer();
 
-        let secondsCounter = 0;
-        setInterval(() => {
+        var secondsCounter = 0;
+        setInterval(function() {
             try {
                 secondsCounter++;
                 updateTimeDisplay();
@@ -161,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (e) { console.error("Error in main interval:", e); }
         }, 1000);
 
-        setTimeout(() => window.location.reload(true), 4 * 60 * 60 * 1000);
+        setTimeout(function() { window.location.reload(true); }, 4 * 60 * 60 * 1000);
     }
 
     init();
