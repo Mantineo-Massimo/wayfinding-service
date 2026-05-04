@@ -18,6 +18,12 @@ def serve_elevator_view():
     """EN: Serves the elevator view HTML page. / IT: Serve la pagina HTML della vista ascensore."""
     return send_from_directory(current_app.template_folder, 'elevator_view.html')
 
+@bp.route('/static/<path:path>')
+def serve_static(path):
+    """EN: Serves static files. / IT: Serve file statici."""
+    static_folder = os.path.abspath(os.path.join(current_app.root_path, '..', 'ui', 'static'))
+    return send_from_directory(static_folder, path)
+
 @bp.route('/assets/<path:path>')
 def serve_assets(path):
     """EN: Serves asset files like images. / IT: Serve file di risorse come le immagini."""
